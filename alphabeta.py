@@ -10,12 +10,19 @@ def terminal_test(state, depth):
 def max_value(state, player, max_depth, alpha, beta, eval_function):
     if terminal_test(state, max_depth):
         return eval_function(state, player)
+
     value = -infinity
-    for action, successor in state.successors():
-        value = max(
-            value,
-            min_value(successor, player, max_depth - 1, alpha, beta, eval_function),
+
+    for action in state.possible_actions():
+        value = min_value(
+            state.result_state(action),
+            player,
+            max_depth - 1,
+            alpha,
+            beta,
+            eval_function,
         )
+
         if value >= beta:
             return value
         alpha = max(alpha, value)
@@ -30,10 +37,14 @@ def min_value(state, player, max_depth, alpha, beta, eval_function):
     if terminal_test(state, max_depth):
         return eval_function(state, player)
     value = infinity
-    for action, succesor in state.successors():
-        value = min(
-            value,
-            max_value(succesor, player, max_depth - 1, alpha, beta, eval_function),
+    for action in state.possible_actions():
+        value = max_value(
+            state.result_state(action),
+            player,
+            max_depth - 1,
+            alpha,
+            beta,
+            eval_function,
         )
         if value <= alpha:
             return value

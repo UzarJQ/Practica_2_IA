@@ -1,4 +1,3 @@
-
 # Minimax Search
 
 infinity = 1.0e400
@@ -7,19 +6,35 @@ infinity = 1.0e400
 def terminal_test(state, depth):
     return depth <= 0 or state.is_terminal
 
+
 def max_value(state, player, max_depth):
     """
     Completar con el codigo correspondiente a la funcion <max_value> del
     algoritmo minimax
     """
-    return 0
+    if terminal_test(state, max_depth):
+        return state.utility(player)
+
+    value = -infinity
+
+    for action in state.possible_actions():
+        value = max(min_value(state.result_state(action), player, max_depth - 1), value)
+    return value
+
 
 def min_value(state, player, max_depth):
     """
     Completar con el codigo correspondiente a la funcion <min_value> del
     algoritmo minimax
     """
-    return 0
+    if terminal_test(state, max_depth):
+        return state.utility(player)
+
+    value = -infinity
+
+    for action in state.possible_actions():
+        value = min(max_value(state.result_state(action), player, max_depth - 1), value)
+    return value
 
 
 def minimax_search(game, max_depth=infinity):
@@ -34,10 +49,9 @@ def minimax_search(game, max_depth=infinity):
     # Searches for the action leading to the sucessor state with the highest min score
     successors = game.successors()
     best_score, best_action = -infinity, successors[0][0]
-    for (action, state) in successors:
+    for action, state in successors:
         score = min_value(state, player, max_depth)
         if score > best_score:
             best_score, best_action = score, action
-    
-    return best_action
 
+    return best_action
